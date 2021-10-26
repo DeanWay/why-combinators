@@ -4,149 +4,176 @@ import {
   Step,
 } from "code-surfer";
 import { github, vsDark } from "@code-surfer/themes";
+import 'prismjs/components/prism-haskell'
 
 export const theme = vsDark;
 
-# Hello 👋
+# Why Combinators?
 
-You are using [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](https://codesurfer.pomb.us)
+---
+
+Combinators are things that combine things
+<div style="text-align: center;">
+Specifically, we're interested in building bigger programs
+<br/>out of smaller ones
+</div>
+
+---
+
+Haskell
 
 ---
 
 <CodeSurfer>
 
-```js title="This is a title" subtitle="and this a subtitle"
-function lorem(ipsum, dolor = 1) {
-  const sit = ipsum == null ? 0 : ipsum.sit;
-  dolor = sit - amet(dolor);
-  return sit
-    ? consectetur(ipsum, 0, dolor < 0 ? 0 : dolor)
-    : [];
-}
+```haskell title="3 things to know"
+-- definting a function
+add x y = x + y
+-- const add = x => y => x + y
 
-function incididunt(ipsum, ut = 1) {
-  ut = labore.et(amet(ut), 0);
-  const sit = ipsum == null ? 0 : ipsum.sit;
+-- calling a function
+add 1 2
+-- add(1)(2)
 
-  if (!sit || ut < 1) {
-    return [];
-  }
+-- operators are functions
+add = (+)
+1 `add` 2 == 1 + 2
 
-  let dolore = 0;
-  let magna = 0;
-  const aliqua = new eiusmod(labore.ut(sit / ut));
-
-  while (dolore < sit) {
-    aliqua[magna++] = consectetur(
-      ipsum,
-      dolore,
-      (dolore += ut)
-    );
-  }
-
-  return aliqua;
-}
 ```
-
-```js
-function lorem(ipsum, dolor = 1) {
-  const sit = ipsum == null ? 0 : ipsum.sit;
-  dolor = sit - amet(dolor);
-  return sit
-    ? consectetur(ipsum, 0, dolor < 0 ? 0 : dolor)
-    : [];
-}
-
-function adipiscing(...elit) {
-  if (!elit.sit) {
-    return [];
-  }
-
-  const sed = elit[0];
-  return eiusmod.tempor(sed) ? sed : [sed];
-}
-
-function incididunt(ipsum, ut = 1) {
-  ut = labore.et(amet(ut), 0);
-  const sit = ipsum == null ? 0 : ipsum.sit;
-
-  if (!sit || ut < 1) {
-    return [];
-  }
-
-  let dolore = 0;
-  let magna = 0;
-  const aliqua = new eiusmod(labore.ut(sit / ut));
-
-  while (dolore < sit) {
-    aliqua[magna++] = consectetur(
-      ipsum,
-      dolore,
-      (dolore += ut)
-    );
-  }
-
-  return aliqua;
-}
+```diff 1:3
 ```
-
-```diff 1[10:14],2[15:19],3[22:27],10:12
-
+```diff 4:7
+```
+```diff 9:12
 ```
 
 </CodeSurfer>
 
 ---
 
-<CodeSurferColumns themes={[vsDark, github]}>
+<CodeSurfer>
 
-<Step>
+```haskell 
+exclaim s = s ++ "!"
+question s = s ++ "?"
 
-```js
-const magna = aliqua => aliqua.ut((enim, ad) => enim, 0);
+-- >>> exclaimedQuestion "what"
+-- "what!?"
+exclaimedQuestion s = s ++ "!?"
+exclaimedQuestion s = question (exclaim s)
+exclaimedQuestion = question . exclaim
+```
+```diff 1:2
+```
+```diff 4:5
+```
+```diff 6
+```
+```diff 7
+```
+```diff 8
 ```
 
-```js
-const minim = (ad, enim) => dolore.magna(ad / enim);
-```
-
-</Step>
-
-<Step>
-
-```js
-const lorem = (ipsum, dolor, sit) => {
-  const amet = dolor - ipsum;
-  return consectetur.adipiscing(
-    {
-      elit: sed.eiusmod(sit - dolor) / amet + 2,
-    },
-    (tempor, incididunt) => ipsum + amet * incididunt
-  );
-};
-
-const magna = aliqua => aliqua.ut((enim, ad) => enim, 0);
-```
-
-```js
-const minim = (ad, enim) => dolore.magna(ad / enim);
-
-const sed = (eiusmod, tempor, incididunt) => {
-  const ut = tempor - eiusmod;
-  return labore.et(
-    {
-      amet: dolore.magna(incididunt - tempor) / ut + 2,
-    },
-    (aliqua, elit) => eiusmod + ut * elit
-  );
-};
-```
-
-</Step>
-
-</CodeSurferColumns>
+</CodeSurfer>
 
 ---
 
-docs:  
-[codesurfer.pomb.us](https://codesurfer.pomb.us)
+<CodeSurfer>
+
+```haskell title="What the heck is this dot?"
+(.) :: (b -> c) -> (a -> b) -> a -> c
+(.) f g x = f (g x) 
+
+containsWord word = any (== word) . words
+```
+```diff 1[20:27]
+```
+```diff 1[8:15]
+```
+```diff 1[32:37]
+```
+```diff 2[13:20]
+```
+```diff 4
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```haskell
+isExclamationMark c = c == '!'
+isQuestionMark c = c == '?'
+isPeriod c = c == '.'
+
+isPunctuation c = isQuestionMark c || isExclamationMark c || isPeriod c
+isPunctuation = isQuestionMark . isExclamationMark . isPeriod -- error
+orPredicates pred1 pred2 x = pred1 x || pred2 x
+(<||>) = orPredicates
+
+isPunctuation = isQuestionMark <||> isExclamationMark <||> isPeriod
+```
+```diff 1:3
+```
+```diff 5
+```
+```diff 6
+```
+```diff 7
+```
+```diff 8
+```
+```diff 10
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```haskell title="Parser Combinators"
+type Parser a = String -> (a, String)
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```haskell
+satisfy :: (Char -> Bool) -> Parser Char
+
+parseQuestionMark = satisfy isQuestionMark
+parseExclaimationMark = satisfy isExclamationMark
+```
+
+</CodeSurfer>
+
+---
+
+<CodeSurfer>
+
+```haskell
+-- >>> parseInterrobang "!? "
+-- [("!?", " ")]
+
+parseInterrobang = parseExclaimationMark `joinParser` parseQuestionMark
+```
+
+</CodeSurfer>
+
+
+---
+
+<CodeSurfer>
+
+```python file="./parser.py" title="Parser Combinators in Python"
+```
+
+</CodeSurfer>
+
+
