@@ -109,7 +109,10 @@ isQuestionMark c = c == '?'
 isPeriod c = c == '.'
 
 isPunctuation c = isQuestionMark c || isExclamationMark c || isPeriod c
-isPunctuation = isQuestionMark . isExclamationMark . isPeriod -- error
+
+isPunctuation = isQuestionMark . isExclamationMark . isPeriod 
+-- error
+
 orPredicates pred1 pred2 x = pred1 x || pred2 x
 (<||>) = orPredicates
 
@@ -119,15 +122,16 @@ isPunctuation = isQuestionMark <||> isExclamationMark <||> isPeriod
 ```
 ```diff 5
 ```
-```diff 6
-```
 ```diff 7
 ```
 ```diff 8
 ```
 ```diff 10
 ```
-
+```diff 11
+```
+```diff 13
+```
 </CodeSurfer>
 
 ---
@@ -158,10 +162,9 @@ parseExclaimationMark = satisfy isExclamationMark
 <CodeSurfer>
 
 ```haskell
--- >>> parseInterrobang "!? "
--- [("!?", " ")]
+andThenParse :: Parser a -> Parser a -> Parser a
 
-parseInterrobang = parseExclaimationMark `joinParser` parseQuestionMark
+parseInterrobang = parseExclaimationMark `andThenParse` parseQuestionMark
 ```
 
 </CodeSurfer>
